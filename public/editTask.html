@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task</title>
+    <style>
+        /* Existing Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(120deg, #a0e9e5 0%, #64b3f4 100%);
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.edit-task-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.edit-task-container input,
+.edit-task-container textarea,
+.edit-task-container button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.edit-task-container button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-task-container button:hover {
+    background-color: #388e3c;
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+    .edit-task-container {
+        padding: 20px;
+    }
+
+    .edit-task-container input,
+    .edit-task-container textarea,
+    .edit-task-container button {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="edit-task-container">
+        <h2>Edit Task</h2>
+        <input type="text" id="task-name" placeholder="Task Name">
+        <textarea id="task-desc" placeholder="Description"></textarea>
+        <input type="datetime-local" id="task-time">
+        <button onclick="saveTask()">Save Task</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Get the task ID from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const taskId = urlParams.get('taskId');
+
+        // Fetch task details when the page loads
+        window.onload = function() {
+            axios.get(`http://localhost:7000/tasks/task/${taskId}`)
+                .then(response => {
+                    const task = response.data;
+                    document.getElementById('task-name').value = task.task;
+                    document.getElementById('task-desc').value = task.description;
+                    document.getElementById('task-time').value = new Date(task.remainderTime).toISOString().slice(0, 16);
+                })
+                .catch(error => console.error('Error fetching task details:', error));
+        }
+
+        // Function to save edited task
+        function saveTask() {
+            const task = {
+                task: document.getElementById('task-name').value,
+                description: document.getElementById('task-desc').value,
+                remainderTime: new Date(document.getElementById('task-time').value).toISOString()
+            };
+
+            axios.put(`http://localhost:7000/tasks/${taskId}`, task)
+                .then(response => {
+                    // alert('Task updated successfully!');
+                    window.location.href = 'tasks.html'; // Redirect back to tasks list
+                })
+                .catch(error => {
+                    console.error('Error updating task:', error);
+                    alert('Error updating task. Please try again.');
+                });
+        }
+    </script>
+</body>
+</html>

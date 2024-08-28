@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Signup</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <!-- Login Form -->
+            <form id="login-form" class="form">
+                <h2>Login</h2>
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <!-- Corrected button type to "submit" -->
+                <button type="submit" id="login-submit">Login</button>
+                <p class="toggle-form">Don't have an account? <span id="show-signup">Sign Up</span></p>
+            </form>
+            <!-- Signup Form -->
+            <form id="signup-form" class="form hidden">
+                <h2>Sign Up</h2>
+                <input type="text" id="signup-username" placeholder="Username" required>
+                <input type="email" id="signup-email" placeholder="Email" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <!-- Corrected button type to "submit" -->
+                <button type="submit" id="signup-submit">Sign Up</button>
+                <p class="toggle-form">Already have an account? <span id="show-login">Login</span></p>
+            </form>
+        </div>
+    </div>
+    <!-- Corrected typo in the script tag -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="script.js"></script>
+    <script src="toggle.js"></script>
+</body>
+</html>

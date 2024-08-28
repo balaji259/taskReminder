@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Tasks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .task-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .username {
+            text-align: right;
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .task {
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .task.completed {
+            background-color: #d1c4e9;
+            text-decoration: line-through;
+        }
+
+        .task input[type="checkbox"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .task-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #388e3c;
+            flex: 1;
+        }
+
+        .task-time {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .add-task {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .add-task:hover {
+            background-color: #388e3c;
+        }
+
+        .no-tasks-message {
+            text-align: center;
+            font-size: 16px;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 600px) {
+            .task-container {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+            }
+
+            .username {
+                font-size: 16px;
+            }
+
+            .task {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px;
+            }
+
+            .task-name {
+                font-size: 14px;
+            }
+
+            .task-time {
+                font-size: 12px;
+                margin-top: 5px;
+            }
+
+            .add-task {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .no-tasks-message {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="task-container">
+        <div class="username">Hello, <span id="username"></span></div>
+        <div id="tasks"></div>
+        <button class="add-task" onclick="addTask()">Add Task</button>
+    </div>
+
+    <!-- Include Axios from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Replace with the actual user ID
+        const userId = localStorage.getItem('userId');
+        console.log(userId);
+
+        // Fetch username and tasks when the page loads
+        window.onload = function() {
+            fetchUsername();
+            fetchTasks();
+        }
+
+        // Function to fetch username using userId
+        function fetchUsername() {
+            axios.get(`http://localhost:7000/username/${userId}`)
+                .then(response => {
+                    const username = response.data.username; // Assume the response has username
+                    document.getElementById('username').innerText = username;
+                })
+                .catch(error => console.error('Error fetching username:', error));
+        }
+
+        // Function to fetch tasks for the user
+        function fetchTasks() {
+            axios.get(`http://localhost:7000/tasks/get/${userId}`)
+                .then(response => {
+                    const tasks = response.data;
+                    const tasksContainer = document.getElementById('tasks');
+                    tasksContainer.innerHTML = ''; // Clear any existing tasks
+
+                    if (tasks.length === 0) {
+                        // If no tasks are available, display a message
+                        const noTasksMessage = document.createElement('div');
+                        noTasksMessage.className = 'no-tasks-message';
+                        noTasksMessage.innerText = 'No tasks today!';
+                        tasksContainer.appendChild(noTasksMessage);
+                    } else {
+                        // If there are tasks, display them
+                        tasks.forEach(task => {
+                            const taskElement = document.createElement('div');
+                            taskElement.className = `task${task.completed ? ' completed' : ''}`;
+                            taskElement.dataset.taskId = task._id; // Store taskId in dataset
+
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.checked = task.completed;
+                            checkbox.onchange = () => {
+                                toggleTaskCompletion(task._id, checkbox.checked);
+                            };
+
+                            const taskName = document.createElement('div');
+                            taskName.className = 'task-name';
+                            taskName.innerText = task.task;
+
+                            const taskTime = document.createElement('div');
+                            taskTime.className = 'task-time';
+
+                            let date = new Date(task.remainderTime);
+                            const options = {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true,
+                                timeZone: 'Asia/Kolkata'
+                            };
+                            const formattedTime = date.toLocaleTimeString('en-IN', options);
+
+                            taskTime.innerText = formattedTime;
+
+                            taskElement.appendChild(checkbox);
+                            taskElement.appendChild(taskName);
+                            taskElement.appendChild(taskTime);
+
+                            // Add click event to open task details
+                            taskElement.onclick = function(event) {
+                                if (event.target.type !== 'checkbox') { // Check if clicked element is not the checkbox
+                                    window.location.href = `taskDetails.html?taskId=${taskElement.dataset.taskId}`;
+                                }
+                            };
+
+                            tasksContainer.appendChild(taskElement);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error fetching tasks:', error));
+        }
+
+        // Function to toggle task completion
+        function toggleTaskCompletion(taskId, isCompleted) {
+            axios.put(`http://localhost:7000/tasks/${taskId}`, { completed: isCompleted })
+                .then(response => {
+                    console.log('Task updated successfully:', response.data);
+                    // Update the task's background color dynamically
+                    const taskElement = document.querySelector(`.task[data-task-id="${taskId}"]`);
+                    if (taskElement) {
+                        taskElement.className = `task${isCompleted ? ' completed' : ''}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating task:', error);
+                });
+        }
+
+        // Function to add a new task (This is a placeholder function)
+        function addTask() {
+            // Redirect to task creation page or open a modal for adding a task
+            window.location.href = "addTask.html";
+        }
+    </script>
+</body>
+</html>

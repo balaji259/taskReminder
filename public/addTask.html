@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Task</title>
+    <style>
+      /* Existing Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container h2 {
+    text-align: center;
+    color: #4caf50;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="time"],
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.form-group textarea {
+    resize: none;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #388e3c;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #4caf50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Styles */
+@media (max-width: 600px) {
+    .container {
+        margin: 20px;
+        padding: 15px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="time"],
+    .form-group textarea {
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .back-link {
+        font-size: 14px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add New Task</h2>
+        <form id="taskForm">
+            <div class="form-group">
+                <label for="task">Task Name</label>
+                <input type="text" id="task" name="task" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description (max 100 characters)</label>
+                <textarea id="description" name="description" maxlength="100" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="remainderTime">Reminder Time</label>
+                <input type="time" id="remainderTime" name="remainderTime" required>
+            </div>
+            <button type="submit" class="submit-btn">Add Task</button>
+        </form>
+        <a href="tasks.html" class="back-link">Back to Task List</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.getElementById('taskForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const userId = localStorage.getItem('userId');
+            const task = document.getElementById('task').value;
+            const description = document.getElementById('description').value;
+            const remainderTime = document.getElementById('remainderTime').value;
+
+            // Convert remainder time to a Date object with today's date
+            const today = new Date();
+            const timeParts = remainderTime.split(':');
+            const reminderDateTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), timeParts[0], timeParts[1]);
+
+            axios.post(`http://localhost:7000/tasks/add/${userId}`, {
+                task: task,
+                description: description,
+                remainderTime: reminderDateTime.toISOString()
+            })
+            .then(response => {
+                // alert('Task added successfully!');
+                window.location.href = 'tasks.html'; // Redirect to tasks page
+            })
+            .catch(error => {
+                console.error('Error adding task:', error);
+                alert('Failed to add task. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
