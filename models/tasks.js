@@ -1,4 +1,3 @@
-// task.js model
 const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
@@ -6,7 +5,8 @@ const taskSchema = new mongoose.Schema({
     task: { type: String, required: true },
     description: { type: String, max: 100 },
     remainderTime: { type: Date, required: true },
-    completed: { type: Boolean, default: false }, // Add this line
+    completed: { type: Boolean, default: false }, // Task completion status
+    isSent: { type: Boolean, default: false }, // Add this line to track email sent status
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });

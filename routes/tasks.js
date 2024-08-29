@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Task = require('../models/tasks');  // Ensure this path is correct
-const { scheduleEmail } = require('../utils/mail'); 
 
 // Fetch individual task
 router.get("/task/:id", async (req, res) => {
@@ -32,8 +31,9 @@ router.post('/add/:userId', async (req, res) => {
         const newTask = new Task({ userId, task, description, remainderTime });
         const savedTask = await newTask.save();
 
-        scheduleEmail(savedTask);
-        
+        // Remove the call to scheduleEmail(savedTask);
+        // The interval-based checking in mail.js will handle sending reminders
+
         res.status(201).json({ message: 'Task added!', task: savedTask });
     } catch (e) {
         res.status(400).json({ message: e.message });
@@ -55,7 +55,9 @@ router.put('/:taskId', async (req, res) => {
             return res.status(404).json({ message: 'Task not found' });
         }
 
-        scheduleEmail(updatedTask);
+        // Remove the call to scheduleEmail(updatedTask);
+        // The interval-based checking in mail.js will handle sending reminders
+
         res.json(updatedTask);
     } catch (err) {
         res.status(400).json({ message: err.message });

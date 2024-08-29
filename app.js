@@ -1,25 +1,26 @@
+// app.js
 require('dotenv').config();
 const express = require('express');
 const app = express();
 const tasks = require("./models/tasks");
 const users = require("./models/users");
 const authRouter = require("./routes/auth");
-const taskRouter=require("./routes/tasks.js");
-const userRoute=require("./routes/users");
+const taskRouter = require("./routes/tasks.js");
+const userRoute = require("./routes/users");
 const connectdb = require("./db/connect");
 const bodyparser = require('body-parser');
-const jwt = require("jsonwebtoken");  // Corrected the typo here
+const jwt = require("jsonwebtoken");
 const path = require("path");
-const cors = require('cors');
+require('./utils/mail'); // Import mail.js to start email interval checks
 
 app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
-app.use(cors());
+
 app.use(express.static('public'));
 
 app.use("/user", authRouter);
-app.use("/tasks",taskRouter);
-app.use("/username",userRoute);
+app.use("/tasks", taskRouter);
+app.use("/username", userRoute);
 
 connectdb();
 
