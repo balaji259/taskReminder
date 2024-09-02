@@ -145,7 +145,7 @@
 
         // Function to fetch username using userId
         function fetchUsername() {
-            axios.get(`http://localhost:7000/username/${userId}`)
+            axios.get(`/username/${userId}`)
                 .then(response => {
                     const username = response.data.username; // Assume the response has username
                     document.getElementById('username').innerText = username;
@@ -155,7 +155,7 @@
 
         // Function to fetch tasks for the user
         function fetchTasks() {
-            axios.get(`http://localhost:7000/tasks/get/${userId}`)
+            axios.get(`/tasks/get/${userId}`)
                 .then(response => {
                     const tasks = response.data;
                     const tasksContainer = document.getElementById('tasks');
