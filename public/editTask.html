@@ -81,7 +81,7 @@ body {
 
         // Fetch task details when the page loads
         window.onload = function() {
-            axios.get(`http://localhost:7000/tasks/task/${taskId}`)
+            axios.get(`/tasks/task/${taskId}`)
                 .then(response => {
                     const task = response.data;
                     document.getElementById('task-name').value = task.task;
@@ -99,7 +99,7 @@ body {
                 remainderTime: new Date(document.getElementById('task-time').value).toISOString()
             };
 
-            axios.put(`http://localhost:7000/tasks/${taskId}`, task)
+            axios.put(`/tasks/${taskId}`, task)
                 .then(response => {
                     // alert('Task updated successfully!');
                     window.location.href = 'tasks.html'; // Redirect back to tasks list
