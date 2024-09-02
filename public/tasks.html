@@ -219,7 +219,7 @@
 
         // Function to toggle task completion
         function toggleTaskCompletion(taskId, isCompleted) {
-            axios.put(`http://localhost:7000/tasks/${taskId}`, { completed: isCompleted })
+            axios.put(`/tasks/${taskId}`, { completed: isCompleted })
                 .then(response => {
                     console.log('Task updated successfully:', response.data);
                     // Update the task's background color dynamically
