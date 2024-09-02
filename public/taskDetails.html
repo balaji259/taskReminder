@@ -120,7 +120,7 @@
 
         // Function to fetch task details using taskId
         function fetchTaskDetails() {
-            axios.get(`http://localhost:7000/tasks/task/${taskId}`)
+            axios.get(`/tasks/task/${taskId}`)
                 .then(response => {
                     const task = response.data;
                     document.getElementById('task-detail-name').innerHTML = `<span>Task:</span> ${task.task}`;
@@ -151,7 +151,7 @@
 
         // Function to delete a task
         function deleteTask(taskId) {
-            axios.delete(`http://localhost:7000/tasks/${taskId}`)
+            axios.delete(`/tasks/${taskId}`)
                 .then(response => {
                     // alert(response.data.message); // Show a success message
                     window.location.href = "tasks.html"; // Redirect to tasks page after deletion
